@@ -7,19 +7,29 @@
       @click-left="$router.back()"
       />
       <!-- 登录表单 -->
-      <van-cell-group>
+      <van-form
+       :show-error="false"
+       :show-error-message="false"
+       :validate-first="true"
+       @submit="onLogin"
+       @failed="onFailed"
+       >
         <van-field
           v-model="user.mobile"
           icon-prefix="icon"
           left-icon="shouji"
+          name="手机号"
           placeholder="请输入手机号"
+          :rules="formRoules.mobile"
        />
         <van-field
           v-model="user.code"
           clearable
           icon-prefix="icon"
           left-icon="yanzhengma"
+          name="验证码"
           placeholder="请输入验证码"
+          :rules="formRoules.code"
         >
           <template #button>
             <van-button class="send-btn" size="mini" round>发送验证码</van-button>
@@ -28,13 +38,12 @@
         <div class="login-btn-wrap">
           <van-button
            class="login-btn"
-           @click="onLogin"
            type="info"
             block
             >
             登录</van-button>
         </div>
-      </van-cell-group>
+      </van-form>
   </div>
 </template>
 
@@ -48,8 +57,26 @@ export default {
   data () {
     return {
       user: {
-        mobile: '13911111111',
-        code: '246810'
+        mobile: '',
+        code: ''
+      },
+      formRoules: {
+        mobile: [
+          { required: true, message: '请填写手机号' },
+          { pattern: /^1[3|5|7|8|9]\d{9}$/, message: '手机号格式错误' }
+        ],
+        code: [
+          { required: true, message: '请填写验证码' },
+          { pattern: /^\d{6}$/, message: '验证码格式错误' }
+        ]
+      },
+      onFailed (error) {
+        if (error.errors[0]) {
+          Toast({
+            message: error.errors[0].message,
+            position: top
+          })
+        }
       }
     }
   },
