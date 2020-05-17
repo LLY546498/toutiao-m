@@ -14,37 +14,39 @@
     >搜索</van-button>
     </van-nav-bar>
     <!-- 文章频道列表 -->
-      <van-tabs v-model="active">
-        <van-tab
-         :title="channel.name"
-         v-for="channel in channels"
-          :key="channel.id"
-         >{{ channel.name }}的内容 1</van-tab>
-      </van-tabs>
+    <van-tabs v-model="active">
+      <van-tab
+       :title="channel.name"
+       v-for="channel in channels"
+       :key="channel.id"
+      >{{ channel.name }}的内容</van-tab>
+    </van-tabs>
   </div>
 </template>
 
 <script>
-// import { getUserChannels } from '@/api/user.js'
+import { getUserChannels } from '@/api/user.js'
 export default {
   name: 'HomeIndex',
   components: {},
   props: {},
   data () {
     return {
-      active: 0
+      active: 0,
+      channels: []
     }
   },
   computed: {},
   watch: {},
   created () {
-    // this.loadChannels()
+    this.loadChannels()
   },
   mounted () {},
   methods: {
-    // async loadChannels () {
-    //   const { data } = await getUserChannels()
-    // }
+    async loadChannels () {
+      const { data } = await getUserChannels()
+      this.channels = data.data.channels
+    }
   }
 }
 </script>
