@@ -19,16 +19,21 @@
        :title="channel.name"
        v-for="channel in channels"
        :key="channel.id"
-      >{{ channel.name }}的内容</van-tab>
+      >
+        <article-list :channel="channel"/>
+      </van-tab>
     </van-tabs>
   </div>
 </template>
 
 <script>
 import { getUserChannels } from '@/api/user.js'
+import ArticleList from './components/article-list'
 export default {
   name: 'HomeIndex',
-  components: {},
+  components: {
+    ArticleList
+  },
   props: {},
   data () {
     return {
