@@ -61,7 +61,7 @@ export default {
     }
     /deep/ .van-cell__value {
         flex: unset;
-        width: 116px;
+        // width: 116px;
         height: 73px;
         margin-left: 12px;
     }

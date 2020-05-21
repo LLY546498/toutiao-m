@@ -22,23 +22,48 @@
       >
         <article-list :channel="channel"/>
       </van-tab>
+      <div
+        slot="nav-right"
+        class="wap-nav-placeholder">
+      </div>
+      <div
+       slot="nav-right"
+       @click="isChannelEditShow = true"
+       class="wap-nav-wrap"
+       >
+        <van-icon name="wap-nav" />
+      </div>
     </van-tabs>
+    <van-popup
+     v-model="isChannelEditShow"
+     position="bottom"
+     closeable
+     close-icon-position="top-left"
+     class="channel-edit-popup"
+     get-container="body"
+     style="height: 100%"
+    >
+      <channel-edit/>
+    </van-popup>
   </div>
 </template>
 
 <script>
 import { getUserChannels } from '@/api/user.js'
 import ArticleList from './components/article-list'
+import ChannelEdit from './components/channel-edit'
 export default {
   name: 'HomeIndex',
   components: {
-    ArticleList
+    ArticleList,
+    ChannelEdit
   },
   props: {},
   data () {
     return {
       active: 0,
-      channels: []
+      channels: [],
+      isChannelEditShow: true
     }
   },
   computed: {},
@@ -83,6 +108,36 @@ export default {
       width: 15px !important;
       height: 3px;
       background-color: #3296fa;
+    }
+  }
+  .wap-nav-placeholder {
+    width: 33px;
+    flex-shrink: 0;
+  }
+  .wap-nav-wrap {
+    position: fixed;
+    right: 0;
+    height: 43px;
+    width: 33px;
+    line-height: 44px;
+    background-color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: .9;
+    // position: relative;
+    .van-icon {
+      font-size: 20px;
+    }
+    &:before {
+      content: '';
+      width: 1px;
+      height: 43px;
+      background: url('./line.png') no-repeat;
+      background-size: cover;
+      position: absolute;
+      left: 0;
+      top: 0;
     }
   }
 }
