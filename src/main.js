@@ -10,6 +10,7 @@ import 'vant/lib/index.css'
 import './styles/index.less'
 // 设置rem适配
 import 'amfe-flexible'
+import './utils/dayjs'
 // 全局注册vant中的组件
 Vue.use(Vant)
 
