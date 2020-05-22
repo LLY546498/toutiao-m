@@ -10,14 +10,17 @@
             plain
             round
             size="mini"
-          >编辑</van-button>
+            @click="isEdit = !isEdit"
+          >{{ isEdit ? '完成' : '编辑' }}</van-button>
       </van-cell>
       <van-grid :gutter="10">
          <van-grid-item
           class="grid-item"
-          v-for="value in 8"
-          :key="value"
-          text="文字"
+          :icon="(isEdit && index !== 0) ? 'clear' : ''"
+          v-for="(channel,index) in userChannels"
+          :key="index"
+          :text="channel.name"
+          @click="onUserChannelClick(index)"
           />
        </van-grid>
       <van-cell center :border="false">
@@ -29,27 +32,85 @@
       <van-grid :gutter="10">
          <van-grid-item
           class="grid-item"
-          v-for="value in 80"
-          :key="value"
-          text="文字"
+          v-for="(channel, index) in recommendChannels"
+          :key="index"
+          :text="channel.name"
+          @click="onAdd(channel)"
           />
        </van-grid>
   </div>
 </template>
 
 <script>
+import { getAllChannels } from '@/api/channel'
 export default {
   name: 'ChannelEdit',
   components: {},
-  props: {},
-  data () {
-    return {}
+  props: {
+    userChannels: {
+      type: Array,
+      required: true
+    }
   },
-  computed: {},
+  data () {
+    return {
+      allchannels: [],
+      isEdit: false
+    }
+  },
+  computed: {
+    //   推荐频道列表
+    recommendChannels () {
+      return this.allchannels.filter(channle => {
+        //   判断当前遍历的频道是否属于我的频道
+        return !this.userChannels.find(userChannel => {
+          return userChannel.id === channle.id
+        })
+      })
+    //   const arr = []
+    //   this.allchannels.forEach(channel => {
+    //     let flag = false
+    //     for (let i = 0; i < this.userChannels.length; i++) {
+    //       if (this.userChannels[i].id === channel.id) {
+    //         //   所有频道中的频道项属于用户频道
+    //         flag = true
+    //         break
+    //       }
+    //     }
+    //     if (!flag) {
+    //       arr.push(channel)
+    //     }
+    //   })
+    //   return arr
+    }
+  },
   watch: {},
-  created () {},
+  created () {
+    this.loadAllChannels()
+  },
   mounted () {},
-  methods: {}
+  methods: {
+    async loadAllChannels () {
+      const { data } = await getAllChannels()
+      this.allchannels = data.data.channels
+    },
+    onAdd (channel) {
+      this.userChannels.push(channel)
+    },
+    onUserChannelClick (index) {
+      if (this.isEdit && index !== 0) {
+        this.deleteChannel(index)
+      } else {
+        this.switchChannel(index)
+      }
+    },
+    deleteChannel (index) {
+      this.userChannels.splice(index, 1)
+    },
+    switchChannel (index) {
+      console.log('切换频道')
+    }
+  }
 }
 </script>
 
@@ -69,7 +130,15 @@ export default {
             .van-grid-item__text {
                 font-size: 14px;
                 color: #222;
+                margin-top: 0;
             }
+        }
+        /deep/ .van-grid-item__icon {
+            position: absolute;
+            right: -5px;
+            top: -5px;
+            font-size: 20px;
+            color: #ccc;
         }
     }
 }
