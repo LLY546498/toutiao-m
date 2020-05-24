@@ -17,6 +17,7 @@
          <van-grid-item
           class="grid-item"
           :icon="(isEdit && index !== 0) ? 'clear' : ''"
+          :class="{ active: index === active }"
           v-for="(channel,index) in userChannels"
           :key="index"
           :text="channel.name"
@@ -49,6 +50,10 @@ export default {
   props: {
     userChannels: {
       type: Array,
+      required: true
+    },
+    active: {
+      type: Number,
       required: true
     }
   },
@@ -109,6 +114,9 @@ export default {
     },
     switchChannel (index) {
       console.log('切换频道')
+      this.$emit('update-active', index)
+      // 关闭弹出层
+      this.$emit('close')
     }
   }
 }
@@ -141,5 +149,10 @@ export default {
             color: #ccc;
         }
     }
+    .active {
+         /deep/ .van-grid-item__text {
+           color: red!important;
+         }
+       }
 }
 </style>

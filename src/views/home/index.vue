@@ -45,6 +45,9 @@
     >
       <channel-edit
         :user-channels="channels"
+        :active="active"
+        @close="isChannelEditShow = false"
+        @update-active="active = $event"
       />
     </van-popup>
   </div>
@@ -80,6 +83,9 @@ export default {
       this.channels = data.data.channels
     }
   }
+  // onUpdateActive (index) {
+  //   this.active = index
+  // }
 }
 </script>
 
