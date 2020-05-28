@@ -21,7 +21,7 @@
           v-for="(channel,index) in userChannels"
           :key="index"
           :text="channel.name"
-          @click="onUserChannelClick(index)"
+          @click="onUserChannelClick(channel, index)"
           />
        </van-grid>
       <van-cell center :border="false">
@@ -43,7 +43,13 @@
 </template>
 
 <script>
-import { getAllChannels } from '@/api/channel'
+import {
+  getAllChannels,
+  addUserChannel,
+  deleteUserChannel
+} from '@/api/channel'
+import { mapState } from 'vuex'
+import { setItem } from '@/utils/storage'
 export default {
   name: 'ChannelEdit',
   components: {},
@@ -64,6 +70,7 @@ export default {
     }
   },
   computed: {
+    ...mapState(['user']),
     //   推荐频道列表
     recommendChannels () {
       return this.allchannels.filter(channle => {
@@ -99,18 +106,44 @@ export default {
       const { data } = await getAllChannels()
       this.allchannels = data.data.channels
     },
-    onAdd (channel) {
+    // 添加频道
+    async onAdd (channel) {
       this.userChannels.push(channel)
+      // TODO： 数据持久化
+      if (this.user) {
+        await addUserChannel({
+          channels: [
+            { id: channel.id, seq: this.userChannels.length }
+          ]
+        })
+        console.log(channel.id)
+      } else {
+        // 没有登录把数据放到本地存储
+        setItem('user-channels', this.userChannels)
+      }
     },
-    onUserChannelClick (index) {
+    onUserChannelClick (channel, index) {
       if (this.isEdit && index !== 0) {
-        this.deleteChannel(index)
+        this.deleteChannel(channel, index)
       } else {
         this.switchChannel(index)
       }
     },
-    deleteChannel (index) {
+    // 删除频道
+    async deleteChannel (channel, index) {
+      if (index <= this.active) {
+        // 更新激活频道的索引
+        // console.log(this.active)
+        // const aa = this.active - 1
+        this.$emit('update-active', this.active - 1)
+        // console.log(aa)
+      }
       this.userChannels.splice(index, 1)
+      if (this.user) {
+        await deleteUserChannel(channel.id)
+      } else {
+        setItem('user-channels', this.userChannels)
+      }
     },
     switchChannel (index) {
       console.log('切换频道')
