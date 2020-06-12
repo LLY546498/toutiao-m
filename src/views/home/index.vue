@@ -11,6 +11,7 @@
       type="info"
       round
       size="small"
+      to="/search"
     >搜索</van-button>
     </van-nav-bar>
     <!-- 文章频道列表 -->
@@ -70,7 +71,7 @@ export default {
     return {
       active: 0,
       channels: [],
-      isChannelEditShow: true
+      isChannelEditShow: false
     }
   },
   computed: {
